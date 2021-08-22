@@ -13,13 +13,7 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
       const secretKey: string = config.get('secretKey');
       const verificationResponse = (await jwt.verify(Authorization, secretKey)) as DataStoredInToken;
       const userId = verificationResponse._id;
-      // const findUser = await userModel.findById(userId);
-
-      const findUser = await userModel.findById(userId).populate({
-        path: 'homes.rolId',
-        model: 'Roles',
-        select: '-__v',
-      });
+      const findUser = await userModel.findById(userId);
 
       if (findUser) {
         req.user = findUser;
