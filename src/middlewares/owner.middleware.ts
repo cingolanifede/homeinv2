@@ -6,7 +6,7 @@ import roleModel from '@/models/roles.model';
 export const ownerMiddleware = (type: string) => {
   return async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
-      const found = req.user.homes.filter(element => element.homeId.toString() === req.params.homeId);
+      const found = req.user.homes.filter(element => element.homeId.toString() === req.params.id);
 
       if (found && found.length) {
         const findRole = await roleModel.findOne({ _id: found[0].rolId });

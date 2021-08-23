@@ -2,8 +2,14 @@
     "env": "production",
     "dbConfig": {
         "host": "localhost",
-        "database": "mongoose",
+        "database": "homeinDb",
         "port": 27017
+    },
+    "mqttConfig": {
+        "host": "www.elevasystems.com.ar",
+        "username": "homein",
+        "password": "abc123",
+        "port": 8883
     },
     "secretKey": "secretKey",
     "log": {

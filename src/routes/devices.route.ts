@@ -11,7 +11,7 @@ import { CreateDeviceDto } from '@/dtos/devices.dto';
 class DevicesRoute implements Routes {
   public app: express.Application;
 
-  public path = '/homes/:homeId/devices';
+  public path = '/homes/:id/devices';
   public router = Router();
   public deviceController = new DevicesController();
 
@@ -21,16 +21,21 @@ class DevicesRoute implements Routes {
 
   private initializeRoutes() {
     this.router.get(`${this.path}`, authMiddleware, this.deviceController.getDevicesByHomeId);
-    this.router.get(`${this.path}/:id`, authMiddleware, this.deviceController.getDeviceById);
+    this.router.get(`${this.path}/:deviceId`, authMiddleware, this.deviceController.getDeviceById);
     this.router.post(
       `${this.path}`,
       authMiddleware,
-      ownerMiddleware(Roles.ADMIN),
       validationMiddleware(CreateDeviceDto, 'body'),
+      ownerMiddleware(Roles.ADMIN),
       this.deviceController.createDevice,
     );
-    this.router.put(`${this.path}/:id`, authMiddleware, validationMiddleware(CreateDeviceDto, 'body', true), this.deviceController.updateDevice);
-    this.router.delete(`${this.path}/:id`, ownerMiddleware(Roles.ADMIN), authMiddleware, this.deviceController.deleteDevice);
+    this.router.put(
+      `${this.path}/:deviceId`,
+      authMiddleware,
+      validationMiddleware(CreateDeviceDto, 'body', true),
+      this.deviceController.updateDevice,
+    );
+    this.router.delete(`${this.path}/:deviceId`, authMiddleware, ownerMiddleware(Roles.ADMIN), this.deviceController.deleteDevice);
   }
 }
 

@@ -9,28 +9,27 @@ export const roleMiddleware = (myHomeId: string) => {
   return async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
       // const findHome = await homeModel.findOne({ _id: homeId });
-
-      const findUser: User = await userModel
-        .findOne({ _id: userId })
-        .populate({
-          path: 'homes.homeId',
-          model: 'Homes',
-          select: '-__v', //exclude
-        })
-        .populate({
-          path: 'homes.rolId',
-          model: 'Roles',
-          select: '-__v',
-        });
-      if (findUser) {
-        const found = findUser.homes.filter(element => element.homeId._id === myHomeId);
-        if (found && found.length) {
-          req.user = findHome;
-        }
-        next();
-      } else {
-        next(new HttpException(401, 'Wrong authentication token'));
-      }
+      // const findUser: User = await userModel
+      //   .findOne({ _id: userId })
+      //   .populate({
+      //     path: 'homes.homeId',
+      //     model: 'Homes',
+      //     select: '-__v', //exclude
+      //   })
+      //   .populate({
+      //     path: 'homes.rolId',
+      //     model: 'Roles',
+      //     select: '-__v',
+      //   });
+      // if (findUser) {
+      //   const found = findUser.homes.filter(element => element.homeId._id === myHomeId);
+      //   if (found && found.length) {
+      //     req.user = findHome;
+      //   }
+      //   next();
+      // } else {
+      //   next(new HttpException(401, 'Wrong authentication token'));
+      // }
     } catch (error) {
       next(new HttpException(401, 'Error getting role'));
     }

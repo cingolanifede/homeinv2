@@ -3,7 +3,7 @@ import { isEmpty } from '@utils/util';
 import userService from '@services/users.service';
 import deviceModel from '@/models/devices.model';
 import { Devices } from '@/interfaces/devices.interface';
-import { CreateDeviceDto, UpdateDeviceDto } from '@/dtos/devices.dto';
+import { CreateDeviceDto, UpdateDeviceDto, UpdateDeviceValueDto } from '@/dtos/devices.dto';
 
 class DeviceService {
   public devices = deviceModel;
@@ -24,10 +24,21 @@ class DeviceService {
     return findDevice;
   }
 
-  public async findDeviceByHomeId(homeId: string): Promise<Devices[]> {
+  public async findDevicesByHomeId(homeId: string): Promise<Devices[]> {
     if (isEmpty(homeId)) throw new HttpException(400, "You're not deviceId");
 
-    const findDevice: Devices[] = await this.devices.find({ homeId });
+    const findDevice: Devices[] = await this.devices
+      .find({ homeId })
+      .populate({
+        path: 'homeId',
+        model: 'Homes',
+        select: '-__v -createdAt', //exclude
+      })
+      .populate({
+        path: 'roomId',
+        model: 'Rooms',
+        select: '-__v -createdAt',
+      });
 
     return findDevice;
   }
@@ -40,14 +51,23 @@ class DeviceService {
     return createDeviceData;
   }
 
-  public async updateDevice(deviceId: string, userData: UpdateDeviceDto): Promise<Devices> {
+  public async updateDevice(deviceId: string, userData: UpdateDeviceDto | UpdateDeviceValueDto, mac?: boolean): Promise<Devices> {
     if (isEmpty(userData)) throw new HttpException(400, 'Not userData');
 
-    const updateDeviceById: Devices = await this.devices.findOneAndUpdate({ _id: deviceId }, { $set: userData });
+    let obj: any = {};
+    if (mac) {
+      obj = { mac: deviceId };
+    } else {
+      obj = { _id: deviceId };
+    }
+
+    const updateDeviceById: Devices = await this.devices.findOneAndUpdate(obj, { $set: userData });
 
     if (!updateDeviceById) throw new HttpException(409, 'No home updated');
 
-    return updateDeviceById;
+    const updatedDevice: Devices = await this.devices.findOne({ _id: updateDeviceById._id });
+
+    return updatedDevice;
   }
 
   public async deleteDevice(deviceId: string): Promise<Devices> {

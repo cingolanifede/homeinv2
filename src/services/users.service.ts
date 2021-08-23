@@ -8,8 +8,8 @@ import { isEmpty } from '@utils/util';
 class UserService {
   public users = userModel;
 
-  public async findAllUser(): Promise<User[]> {
-    const users: User[] = await this.users.find();
+  public async findAllUser(query): Promise<User[]> {
+    const users: User[] = await this.users.find(query);
     return users;
   }
 

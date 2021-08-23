@@ -11,7 +11,20 @@ services:
   #   restart: 'unless-stopped'
   #   networks:
   #     - backend
-  server:
+  mqtt:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    ports:
+      - 1883:1883
+      - 8083:8083
+      - 8883:8883
+    volumes:
+      - ./mosquitto:/mosquitto/config
+    restart: always
+    networks:
+    - backend
+
+  api:
     build:
       context: ./
       target: development-build-stage
@@ -33,11 +46,14 @@ services:
       - mongo
     depends_on:
       - mongo
+
   mongo:
     image: mvertes/alpine-mongo
     container_name: mongo
     ports:
       - '27017:27017'
+    volumes:
+      - data:/data/db
     networks:
       - backend
 

@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateDeviceDto, UpdateDeviceDto } from '@/dtos/devices.dto';
+import { CreateDeviceDto } from '@/dtos/devices.dto';
 import { Devices } from '@/interfaces/devices.interface';
 import DeviceService from '@/services/devices.service';
+import MqttHandler from '@/broker/handler.broker';
 
 class DevicesController {
   public deviceService = new DeviceService();
+  public handler = new MqttHandler();
 
   public getDevices = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -19,7 +21,7 @@ class DevicesController {
   public getDeviceById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       console.log('aca');
-      const roomId: string = req.params.id;
+      const roomId: string = req.params.deviceId;
       const findOneDeviceData: Devices = await this.deviceService.findDeviceById(roomId);
 
       res.status(200).json({ data: findOneDeviceData });
@@ -31,7 +33,7 @@ class DevicesController {
   public getDevicesByHomeId = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const homeId: string = req.params.homeId;
-      const findOneDeviceData: Devices[] = await this.deviceService.findDeviceByHomeId(homeId);
+      const findOneDeviceData: Devices[] = await this.deviceService.findDevicesByHomeId(homeId);
 
       res.status(200).json({ data: findOneDeviceData });
     } catch (error) {
@@ -53,10 +55,14 @@ class DevicesController {
 
   public updateDevice = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const roomId: string = req.params.id;
-      const homeData: UpdateDeviceDto = req.body;
-      const updateDeviceData: Devices = await this.deviceService.updateDevice(roomId, homeData);
+      const deviceId: string = req.params.deviceId;
+      const deviceData: CreateDeviceDto = req.body;
+      const updateDeviceData: Devices = await this.deviceService.updateDevice(deviceId, deviceData);
 
+      if (deviceData.value) {
+        console.log(`value changed to ${deviceData.value}`);
+        this.handler.publishMessage('homein2', deviceData.value);
+      }
       res.status(200).json({ data: updateDeviceData, message: 'updated' });
     } catch (error) {
       next(error);
@@ -65,8 +71,8 @@ class DevicesController {
 
   public deleteDevice = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const roomId: string = req.params.id;
-      const deleteDeviceData: Devices = await this.deviceService.deleteDevice(roomId);
+      const deviceId: string = req.params.deviceId;
+      const deleteDeviceData: Devices = await this.deviceService.deleteDevice(deviceId);
 
       res.status(200).json({ data: deleteDeviceData, message: 'deleted' });
     } catch (error) {

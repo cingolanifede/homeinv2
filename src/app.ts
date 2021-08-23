@@ -8,7 +8,7 @@ import express from 'express';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import morgan from 'morgan';
-import { connect, set } from 'mongoose';
+import { connect /*set*/ } from 'mongoose';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { dbConnection } from '@databases';
@@ -29,8 +29,8 @@ class App {
     this.connectToDatabase();
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
-    // this.initializeSwagger();
     this.initializeErrorHandling();
+    // this.initializeSwagger();
   }
 
   public listen() {
@@ -48,7 +48,7 @@ class App {
 
   private connectToDatabase() {
     if (this.env !== 'production') {
-      set('debug', true);
+      // set('debug', true);
     }
 
     connect(dbConnection.url, dbConnection.options);

@@ -26,7 +26,7 @@ class HomesRoute implements Routes {
       `${this.path}`,
       authMiddleware,
       validationMiddleware(CreateHomeDto, 'body'),
-      ownerMiddleware(Roles.ADMIN),
+      // ownerMiddleware(Roles.ADMIN),
       this.homesController.createHome,
     );
     this.router.put(

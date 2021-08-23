@@ -2,8 +2,14 @@
     "env": "development",
     "dbConfig": {
         "host": "mongo",
-        "database": "mongoose",
+        "database": "homeinDb",
         "port": 27017
+    },
+    "mqttConfig": {
+        "host": "mosquitto",
+        "username": "homein",
+        "password": "abc123",
+        "port": 8883
     },
     "secretKey": "secretKey",
     "log": {

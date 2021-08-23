@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { CreateHomeDto, UpdateHomeDto } from '@/dtos/homes.dto';
 import { Homes } from '@/interfaces/homes.interface';
 import HomeService from '@/services/homes.service';
+import { User } from '@/interfaces/users.interface';
 
 class HomesController {
   public homeService = new HomeService();
@@ -55,7 +56,7 @@ class HomesController {
       const homeId: string = req.params.id;
       const { userId } = req.body;
 
-      const updateHomeData: Homes = await this.homeService.assignHome(homeId, userId);
+      const updateHomeData: User = await this.homeService.assignHome(homeId, userId);
 
       res.status(200).json({ data: updateHomeData, message: 'updated' });
     } catch (error) {
