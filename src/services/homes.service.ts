@@ -35,6 +35,8 @@ class HomeService {
 
     const findRoleId: Roles = await this.roles.findOne({ type: 'admin' });
 
+    if (!findRoleId) throw new HttpException(404, 'No Roles found in collection');
+
     const data: UpdateUserDto = {
       homeId: createHomeData._id,
       rolId: findRoleId._id,

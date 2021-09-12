@@ -4,7 +4,7 @@ import DeviceService from '@/services/devices.service';
 import { connect as mqttConnect, MqttClient } from 'mqtt';
 import { mqttConnection } from '.';
 
-const base_topic = 'homein2';
+const base_topic = process.env.BASE_TOPIC || 'h2';
 
 class MqttHandler {
   public client: MqttClient;
@@ -34,6 +34,11 @@ class MqttHandler {
     });
   }
   //homein2/abcdef123456789/ack/light_1
+  /**
+   * 
+   * basa/mac/cmd/node
+   * cmd = set - ip - online - offline
+   */
   private onMessage(client: MqttClient) {
     client.on('message', async (topic, message) => {
       try {
@@ -73,15 +78,15 @@ class MqttHandler {
   }
 
   async checkCMD(data: any) {
+    if (!data.devCmd) return;
+    console.log(`Cmd: ${data.devCmd}`);
     switch (data.devCmd) {
       case DeviceCmd.ACK: {
-        console.log(DeviceCmd.ACK);
         const deviceData: UpdateDeviceValueDto = { value: data.pld };
         await this.deviceService.updateDevice(data.devMac, deviceData, true);
         break;
       }
       case DeviceCmd.IP: {
-        console.log(DeviceCmd.IP);
         const deviceData: UpdateDeviceValueDto = { ip: data.pld };
         await this.deviceService.updateDevice(data.devMac, deviceData, true);
         break;

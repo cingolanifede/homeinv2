@@ -18,7 +18,6 @@ class RoomsController {
 
   public getRoomById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log('aca');
       const roomId: string = req.params.id;
       const findOneRoomData: Rooms = await this.roomService.findRoomById(roomId);
 

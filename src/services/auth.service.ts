@@ -7,6 +7,7 @@ import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
 import { isEmpty } from '@utils/util';
+import { configData } from '@/config';
 
 class AuthService {
   public users = userModel;
@@ -49,7 +50,7 @@ class AuthService {
 
   public createToken(user: User): TokenData {
     const dataStoredInToken: DataStoredInToken = { _id: user._id };
-    const secretKey: string = config.get('secretKey');
+    const secretKey: string = configData.api.tokenSecret;
     const expiresIn: number = 60 * 60;
 
     return { expiresIn, token: jwt.sign(dataStoredInToken, secretKey, { expiresIn }) };

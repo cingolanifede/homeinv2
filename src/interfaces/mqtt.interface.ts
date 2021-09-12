@@ -1,6 +1,6 @@
 export interface mqttConfig {
   host: string;
-  port: number;
+  port: string;
   username: string;
   password: string;
 }

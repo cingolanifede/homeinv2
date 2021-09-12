@@ -1,7 +1,7 @@
-import config from 'config';
 import { mqttConfig } from '@/interfaces/mqtt.interface';
+import { configData } from '@/config';
 
-const { host, port, username, password }: mqttConfig = config.get('mqttConfig');
+const { host, port, username, password }: mqttConfig = configData.mqttConnection;
 
 export const mqttConnection = {
   url: `mqtt://${username}:${password}@${host}:${port}`,

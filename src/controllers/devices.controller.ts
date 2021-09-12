@@ -20,7 +20,6 @@ class DevicesController {
 
   public getDeviceById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log('aca');
       const roomId: string = req.params.deviceId;
       const findOneDeviceData: Devices = await this.deviceService.findDeviceById(roomId);
 
@@ -32,7 +31,7 @@ class DevicesController {
 
   public getDevicesByHomeId = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const homeId: string = req.params.homeId;
+      const homeId: string = req.params.id;
       const findOneDeviceData: Devices[] = await this.deviceService.findDevicesByHomeId(homeId);
 
       res.status(200).json({ data: findOneDeviceData });
@@ -44,7 +43,7 @@ class DevicesController {
   public createDevice = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const roomData: CreateDeviceDto = req.body;
-      roomData.homeId = req.params.homeId;
+      roomData.homeId = req.params.id;
       const createUserData: Devices = await this.deviceService.createDevice(roomData);
 
       res.status(201).json({ data: createUserData, message: 'created' });

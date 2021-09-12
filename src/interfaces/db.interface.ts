@@ -1,5 +1,7 @@
 export interface dbConfig {
   host: string;
-  port: number;
-  database: string;
+  port: string;
+  name: string;
+  user: string;
+  pass: string
 }

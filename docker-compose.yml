@@ -31,11 +31,8 @@ services:
       dockerfile: Dockerfile
     container_name: server
     ports:
-      - '4000:4000'
-    environment:
-      MONGO_HOST: mongo
-      MONGO_PORT: 27017
-      MONGO_DATABASE: mongoose
+      - '4500:4500'
+    env_file: .env
     volumes:
       - ./:/app
       - /app/node_modules
@@ -48,8 +45,13 @@ services:
       - mongo
 
   mongo:
-    image: mvertes/alpine-mongo
-    container_name: mongo
+    image: mongo:4.1.8-xenial
+    container_name: db
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$DB_MAIN_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$DB_MAIN_PASS
     ports:
       - '27017:27017'
     volumes:

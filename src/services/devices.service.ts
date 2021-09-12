@@ -25,10 +25,11 @@ class DeviceService {
   }
 
   public async findDevicesByHomeId(homeId: string): Promise<Devices[]> {
-    if (isEmpty(homeId)) throw new HttpException(400, "You're not deviceId");
+    console.log(homeId);
+    if (isEmpty(homeId)) throw new HttpException(400, 'Validation didnt pass');
 
     const findDevice: Devices[] = await this.devices
-      .find({ homeId })
+      .find({ homeId: homeId })
       .populate({
         path: 'homeId',
         model: 'Homes',

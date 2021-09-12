@@ -3,7 +3,9 @@
     "dbConfig": {
         "host": "localhost",
         "database": "homeinDb",
-        "port": 27017
+        "port": 27017,
+        "user":"adminCingolani",
+        "password":"homeints"
     },
     "mqttConfig": {
         "host": "www.elevasystems.com.ar",
