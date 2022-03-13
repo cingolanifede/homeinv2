@@ -4,3 +4,9 @@ export interface mqttConfig {
   username: string;
   password: string;
 }
+
+export interface MqttPayload {
+  cmd?: string;
+  node?: string;
+  msg?: string;
+}

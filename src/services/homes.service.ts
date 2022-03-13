@@ -59,9 +59,9 @@ class HomeService {
     return updateHomeById;
   }
 
-  public async assignHome(homeId: string, userId: any): Promise<User> {
-    if (isEmpty(homeId)) throw new HttpException(400, 'No homeId');
-    if (isEmpty(userId)) throw new HttpException(400, 'No homeData');
+  public async assignHome(homeId: string, email: any): Promise<User> {
+    if (isEmpty(homeId)) throw new HttpException(409, 'No homeId');
+    if (isEmpty(email)) throw new HttpException(409, 'No email');
 
     const findRoleId: Roles = await this.roles.findOne({ type: 'user' });
 
@@ -70,7 +70,10 @@ class HomeService {
       rolId: findRoleId._id,
     };
 
-    const updateUserData: User = await this.userService.updateUserHomesData(userId, data);
+    const existEmail: User = await this.userService.findUserByEmail({ email });
+    if (!existEmail) throw new HttpException(409, 'No email found');
+
+    const updateUserData: User = await this.userService.updateUserHomesData(existEmail._id, data);
 
     if (!updateUserData) throw new HttpException(400, 'Couldnt update user home');
 

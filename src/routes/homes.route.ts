@@ -20,8 +20,8 @@ class HomesRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.get(`${this.path}`, authMiddleware, this.homesController.getHomes);
-    this.router.get(`${this.path}/:id`, authMiddleware, this.homesController.getHomeById);
+    this.router.get(`${this.path}`, /*authMiddleware,*/ this.homesController.getHomes);
+    this.router.get(`${this.path}/:homeId`, authMiddleware, this.homesController.getHomeById);
     this.router.post(
       `${this.path}`,
       authMiddleware,
@@ -30,14 +30,14 @@ class HomesRoute implements Routes {
       this.homesController.createHome,
     );
     this.router.put(
-      `${this.path}/:id`,
+      `${this.path}/:homeId`,
       authMiddleware,
       validationMiddleware(CreateHomeDto, 'body', true),
       ownerMiddleware(Roles.ADMIN),
       this.homesController.updateHome,
     );
-    this.router.put(`${this.path}/:id/assign`, authMiddleware, ownerMiddleware(Roles.ADMIN), this.homesController.assignHome);
-    this.router.delete(`${this.path}/:id`, authMiddleware, ownerMiddleware(Roles.ADMIN), this.homesController.deleteHome);
+    this.router.put(`${this.path}/:homeId/assign`, authMiddleware, ownerMiddleware(Roles.ADMIN), this.homesController.assignHome);
+    this.router.delete(`${this.path}/:homeId`, authMiddleware, ownerMiddleware(Roles.ADMIN), this.homesController.deleteHome);
   }
 }
 

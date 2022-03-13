@@ -1,5 +1,6 @@
 import { UpdateDeviceValueDto } from '@/dtos/devices.dto';
 import { DeviceCmd } from '@/enum/cmd.enum';
+import { MqttPayload } from '@/interfaces/mqtt.interface';
 import DeviceService from '@/services/devices.service';
 import { connect as mqttConnect, MqttClient } from 'mqtt';
 import { mqttConnection } from '.';
@@ -24,7 +25,11 @@ class MqttHandler {
 
   private onConnection(client: MqttClient) {
     client.on('connect', function () {
-      client.publish(`${base_topic}/service`, 'online', {
+      const msg: MqttPayload = {
+        cmd: 'online',
+        msg: 'true'
+      }
+      client.publish(`${base_topic}/service`, JSON.stringify(msg), {
         retain: true,
         qos: 0,
       });
@@ -36,8 +41,9 @@ class MqttHandler {
   //homein2/abcdef123456789/ack/light_1
   /**
    * 
-   * basa/mac/cmd/node
+   * base/mac
    * cmd = set - ip - online - offline
+   * {"cmd":"set","node":"light_1","msg":"true"}
    */
   private onMessage(client: MqttClient) {
     client.on('message', async (topic, message) => {
@@ -50,8 +56,6 @@ class MqttHandler {
         const deviceData: any = {
           base: splitedTopic[0],
           devMac: splitedTopic[1],
-          devCmd: splitedTopic[2],
-          devNode: splitedTopic[3],
           pld,
         };
 
@@ -78,22 +82,28 @@ class MqttHandler {
   }
 
   async checkCMD(data: any) {
-    if (!data.devCmd) return;
-    console.log(`Cmd: ${data.devCmd}`);
-    switch (data.devCmd) {
-      case DeviceCmd.ACK: {
-        const deviceData: UpdateDeviceValueDto = { value: data.pld };
-        await this.deviceService.updateDevice(data.devMac, deviceData, true);
-        break;
+    try {
+      // console.log(data);
+      const parsedPayload: MqttPayload = JSON.parse(data.pld);
+      if (!parsedPayload.cmd) return;
+      console.log(`Cmd: ${parsedPayload.cmd}`);
+      switch (parsedPayload.cmd) {
+        case DeviceCmd.ACK: {
+          const deviceData: UpdateDeviceValueDto = { value: data.msg };
+          await this.deviceService.updateDevice(data.devMac, deviceData, true);
+          break;
+        }
+        case DeviceCmd.IP: {
+          const deviceData: UpdateDeviceValueDto = { ip: data.msg };
+          await this.deviceService.updateDevice(data.devMac, deviceData, true);
+          break;
+        }
+        default: {
+          break;
+        }
       }
-      case DeviceCmd.IP: {
-        const deviceData: UpdateDeviceValueDto = { ip: data.pld };
-        await this.deviceService.updateDevice(data.devMac, deviceData, true);
-        break;
-      }
-      default: {
-        break;
-      }
+    } catch (error) {
+      console.log(error);
     }
   }
 }

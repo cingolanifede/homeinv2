@@ -2,9 +2,12 @@ import { NextFunction, Request, Response } from 'express';
 import { CreateRoomDto, UpdateRoomDto } from '@/dtos/rooms.dto';
 import { Rooms } from '@/interfaces/rooms.interface';
 import RoomService from '@/services/rooms.service';
+import { Devices } from '@/interfaces/devices.interface';
+import DeviceService from '@/services/devices.service';
 
 class RoomsController {
   public roomService = new RoomService();
+  public deviceService = new DeviceService();
 
   public getRooms = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -65,6 +68,12 @@ class RoomsController {
   public deleteRoom = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const roomId: string = req.params.id;
+      const homeId: string = req.params.homeId;
+
+      const findOneDeviceData: Devices[] = await this.deviceService.findDevicesByHomeId(homeId);
+      const found = findOneDeviceData.filter(element => element.roomId.toString() === roomId);
+      if (found.length) throw new Error('This room has asociated devices');
+
       const deleteRoomData: Rooms = await this.roomService.deleteRoom(roomId);
 
       res.status(200).json({ data: deleteRoomData, message: 'deleted' });

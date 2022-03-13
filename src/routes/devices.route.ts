@@ -11,7 +11,7 @@ import { CreateDeviceDto } from '@/dtos/devices.dto';
 class DevicesRoute implements Routes {
   public app: express.Application;
 
-  public path = '/homes/:id/devices';
+  public path = '/homes/:homeId/devices';
   public router = Router();
   public deviceController = new DevicesController();
 
@@ -20,7 +20,7 @@ class DevicesRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.get(`${this.path}`, authMiddleware, this.deviceController.getDevicesByHomeId);
+    this.router.get(`${this.path}`, /*authMiddleware,*/ this.deviceController.getDevicesByHomeId);
     this.router.get(`${this.path}/:deviceId`, authMiddleware, this.deviceController.getDeviceById);
     this.router.post(
       `${this.path}`,

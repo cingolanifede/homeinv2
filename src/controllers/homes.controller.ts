@@ -19,7 +19,7 @@ class HomesController {
 
   public getHomeById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const homeId: string = req.params.id;
+      const homeId: string = req.params.homeId;
       const findOneHomeData: Homes = await this.homeService.findHomeById(homeId);
 
       res.status(200).json({ data: findOneHomeData });
@@ -41,7 +41,7 @@ class HomesController {
 
   public updateHome = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const homeId: string = req.params.id;
+      const homeId: string = req.params.homeId;
       const homeData: UpdateHomeDto = req.body;
       const updateHomeData: Homes = await this.homeService.updateHome(homeId, homeData);
 
@@ -53,10 +53,10 @@ class HomesController {
 
   public assignHome = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const homeId: string = req.params.id;
-      const { userId } = req.body;
+      const homeId: string = req.params.homeId;
+      const { email } = req.body;
 
-      const updateHomeData: User = await this.homeService.assignHome(homeId, userId);
+      const updateHomeData: User = await this.homeService.assignHome(homeId, email);
 
       res.status(200).json({ data: updateHomeData, message: 'updated' });
     } catch (error) {
@@ -66,7 +66,7 @@ class HomesController {
 
   public deleteHome = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const homeId: string = req.params.id;
+      const homeId: string = req.params.homeId;
       const deleteHomeData: Homes = await this.homeService.deleteHome(homeId);
 
       res.status(200).json({ data: deleteHomeData, message: 'deleted' });

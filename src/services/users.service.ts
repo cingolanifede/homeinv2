@@ -13,6 +13,11 @@ class UserService {
     return users;
   }
 
+  public async findUserByEmail(query): Promise<User> {
+    const user: User = await this.users.findOne(query);
+    return user;
+  }
+
   public async findUserById(userId: string): Promise<User> {
     if (isEmpty(userId)) throw new HttpException(400, "You're not userId");
 

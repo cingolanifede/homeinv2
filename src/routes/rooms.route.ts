@@ -20,7 +20,7 @@ class RoomsRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.get(`${this.path}`, authMiddleware, this.roomController.getRoomByHomeId);
+    this.router.get(`${this.path}`, /*authMiddleware,*/ this.roomController.getRoomByHomeId);
     this.router.get(`${this.path}/:id`, authMiddleware, this.roomController.getRoomById);
     this.router.post(`${this.path}`, authMiddleware, validationMiddleware(CreateRoomDto, 'body'), this.roomController.createRoom);
     this.router.put(
